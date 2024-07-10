@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Quiz Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #ffafbd, #ffc3a0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        .question {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+        .options li {
+            background: #f0f0f0;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .options li:hover {
+            background: #e0e0e0;
+        }
+        .options .selected {
+            background: #ff6f61;
+        }
+        button {
+            background: #ff6f61;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: none;
+        }
+        button:hover {
+            background: #ff4b3e;
+        }
+        .score {
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="quiz-container">
+            <div id="question-container">
+                <div id="question" class="question"></div>
+                <ul id="options" class="options"></ul>
+                <button id="next-button" onclick="nextQuestion()">Next</button>
+            </div>
+            <div id="score-container" class="score" style="display: none;">
+                Your final score is <span id="score"></span>/<span id="total-questions"></span>
+                <br>
+                <button onclick="restartQuiz()">Restart</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const questions = [
+            {
+                question: "What is the main function of the heart?",
+                options: ["To pump blood throughout the body", "To digest food", "To filter waste from the blood", "To control movement"],
+                correctOption: 0
+            },
+            {
+                question: "How many chambers does the human heart have?",
+                options: ["2", "3", "4", "5"],
+                correctOption: 2
+            },
+            {
+                question: "What type of blood vessels carry blood away from the heart?",
+                options: ["Veins", "Arteries", "Capillaries", "Venules"],
+                correctOption: 1
+            },
+            {
+                question: "Which part of the heart receives deoxygenated blood from the body?",
+                options: ["Left atrium", "Right atrium", "Left ventricle", "Right ventricle"],
+                correctOption: 1
+            },
+            {
+                question: "Which valve is located between the left atrium and left ventricle?",
+                options: ["Tricuspid valve", "Pulmonary valve", "Mitral valve", "Aortic valve"],
+                correctOption: 2
+            },
+            {
+                question: "What is the primary artery that carries oxygenated blood from the heart to the body?",
+                options: ["Pulmonary artery", "Aorta", "Carotid artery", "Femoral artery"],
+                correctOption: 1
+            },
+            {
+                question: "Which vein carries oxygenated blood?",
+                options: ["Pulmonary vein", "Vena cava", "Jugular vein", "Femoral vein"],
+                correctOption: 0
+            },
+            {
+                question: "What is the function of the septum in the heart?",
+                options: ["To separate the two atria", "To separate the two ventricles", "To separate the left and right sides of the heart", "To separate the atria from the ventricles"],
+                correctOption: 2
+            },
+            {
+                question: "Where does the right ventricle pump blood to?",
+                options: ["To the body", "To the left atrium", "To the lungs", "To the right atrium"],
+                correctOption: 2
+            },
+            {
+                question: "What initiates the heartbeat?",
+                options: ["SA node", "AV node", "Bundle of His", "Purkinje fibers"],
+                correctOption: 0
+            },
+            {
+                question: "What is the largest vein in the human body?",
+                options: ["Pulmonary vein", "Vena cava", "Jugular vein", "Femoral vein"],
+                correctOption: 1
+            },
+            {
+                question: "What type of muscle is the heart made of?",
+                options: ["Skeletal muscle", "Smooth muscle", "Cardiac muscle", "Voluntary muscle"],
+                correctOption: 2
+            },
+            {
+                question: "Which chamber of the heart pumps oxygenated blood into the aorta?",
+                options: ["Left atrium", "Right atrium", "Left ventricle", "Right ventricle"],
+                correctOption: 2
+            },
+            {
+                question: "Which side of the heart contains oxygenated blood?",
+                options: ["Left side", "Right side", "Both sides", "Neither side"],
+                correctOption: 0
+            },
+            {
+                question: "Which of the following helps regulate heartbeat?",
+                options: ["Liver", "Lungs", "Kidneys", "Brain"],
+                correctOption: 3
+            },
+            {
+                question: "What is the name of the double-walled sac that contains the heart?",
+                options: ["Myocardium", "Endocardium", "Pericardium", "Epicardium"],
+                correctOption: 2
+            },
+            {
+                question: "What is the purpose of the valves in the heart?",
+                options: ["To mix oxygenated and deoxygenated blood", "To prevent blood from flowing backward", "To pump blood", "To oxygenate the blood"],
+                correctOption: 1
+            },
+            {
+                question: "Where is the tricuspid valve located?",
+                options: ["Between the right atrium and right ventricle", "Between the left atrium and left ventricle", "Between the right ventricle and pulmonary artery", "Between the left ventricle and aorta"],
+                correctOption: 0
+            },
+            {
+                question: "Which part of the heart is responsible for pumping deoxygenated blood to the lungs?",
+                options: ["Left atrium", "Right atrium", "Left ventricle", "Right ventricle"],
+                correctOption: 3
+            },
+            {
+                question: "What happens during systole?",
+                options: ["The heart relaxes", "The heart contracts", "The heart fills with blood", "The heart stops"],
+                correctOption: 1
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const questionContainer = document.getElementById('question');
+            const optionsContainer = document.getElementById('options');
+            const currentQuestion = questions[currentQuestionIndex];
+            
+            questionContainer.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const li = document.createElement('li');
+                li.textContent = option;
+                li.onclick = () => selectOption(index, li);
+                optionsContainer.appendChild(li);
+            });
+
+            document.getElementById('next-button').style.display = 'none';
+        }
+
+        function selectOption(selectedIndex, li) {
+            const options = document.querySelectorAll('.options li');
+            options.forEach(option => option.classList.remove('selected'));
+            li.classList.add('selected');
+
+            const currentQuestion = questions[currentQuestionIndex];
+            if (selectedIndex === currentQuestion.correctOption) {
+                score++;
+            }
+
+            document.getElementById('next-button').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showScore();
+            }
+        }
+
+        function showScore() {
+            document.getElementById('question-container').style.display = 'none';
+            document.getElementById('score-container').style.display = 'block';
+            document.getElementById('score').textContent = score;
+            document.getElementById('total-questions').textContent = questions.length;
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById('question-container').style.display = 'block';
+            document.getElementById('score-container').style.display = 'none';
+            loadQuestion();
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
